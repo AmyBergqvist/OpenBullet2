@@ -4,6 +4,8 @@ using CaptchaSharp.Models;
 using RuriLib.Functions.Captchas;
 using RuriLib.Services;
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,12 +55,12 @@ namespace RuriLib.Providers.Captchas
             => service.SolveKeyCaptchaAsync(userId, sessionId, webServerSign1, webServerSign2, siteUrl, proxy, cancellationToken);
 
         public Task<StringResponse> SolveRecaptchaV2Async(string siteKey, string siteUrl, string sData = "",
-            bool enterprise = false, bool invisible = false, Proxy proxy = null, CancellationToken cancellationToken = default)
-            => service.SolveRecaptchaV2Async(siteKey, siteUrl, sData, enterprise, invisible, proxy, cancellationToken);
+            bool enterprise = false, bool invisible = false, Proxy proxy = null, IEnumerable<(string, string)> cookies = default, string userAgent = default, CancellationToken cancellationToken = default)
+            => service.SolveRecaptchaV2Async(siteKey, siteUrl, sData, enterprise, invisible, proxy, cookies, userAgent, cancellationToken);
 
         public Task<StringResponse> SolveRecaptchaV3Async(string siteKey, string siteUrl, string action, float minScore,
-            bool enterprise = false, Proxy proxy = null, CancellationToken cancellationToken = default)
-            => service.SolveRecaptchaV3Async(siteKey, siteUrl, action, minScore, proxy, cancellationToken);
+            bool enterprise = false, Proxy proxy = null, IEnumerable<(string, string)> cookies = default, string userAgent = default, CancellationToken cancellationToken = default)
+            => service.SolveRecaptchaV3Async(siteKey, siteUrl, action, minScore, enterprise, proxy, cookies, userAgent, cancellationToken);
 
         public Task<StringResponse> SolveTextCaptchaAsync(string text, TextCaptchaOptions options = null, CancellationToken cancellationToken = default)
             => service.SolveTextCaptchaAsync(text, options, cancellationToken);
