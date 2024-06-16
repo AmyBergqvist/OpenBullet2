@@ -101,6 +101,11 @@
             <InputText class="mb-3" @bind-Value="settings.CaptchaSettings.AZCaptchaApiKey" />
             break;
 
+        case CaptchaServiceType.CapMonsterCloud:
+            <label>@Loc["CapMonsterCloudApiKey"]</label>
+            <InputText class="mb-3" @bind-Value="settings.CaptchaSettings.CapMonsterCloudApiKey" />
+            break;
+
         case CaptchaServiceType.CapMonster:
             <label>@Loc["CapMonsterHost"]</label>
             <InputText class="mb-3" @bind-Value="settings.CaptchaSettings.CapMonsterHost" />

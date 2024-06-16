@@ -21,6 +21,9 @@
         /// <summary>The service provided by imagetyperz.com</summary>
         ImageTyperz,
 
+        /// <summary>The service provided by capmonster.cloud</summary>
+        CapMonsterCloud,
+
         /// <summary>The service provided by the CapMonster OCR application by ZennoLab.</summary>
         CapMonster,
 

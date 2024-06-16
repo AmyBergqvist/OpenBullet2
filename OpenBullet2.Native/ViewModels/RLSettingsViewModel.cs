@@ -219,6 +219,15 @@ namespace OpenBullet2.Native.ViewModels
                 OnPropertyChanged();
             }
         }
+        public string CapMonsterCloudApiKey
+        {
+            get => Captcha.CapMonsterCloudApiKey;
+            set
+            {
+                Captcha.CapMonsterCloudApiKey = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int CapMonsterPort
         {
