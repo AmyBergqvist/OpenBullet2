@@ -25,6 +25,7 @@ namespace RuriLib.Legacy.Blocks
 
         /// <summary>The user agent that the service will use (should be the same as yours).</summary>
         public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36";
+
         #endregion
 
         #region TextCaptcha
@@ -73,6 +74,9 @@ namespace RuriLib.Legacy.Blocks
 
         /// <summary>Whether the ReCaptchaV2 is invisible.</summary>
         public bool IsInvisible { get; set; } = false;
+
+        /// <summary>Whether the ReCaptchaV2/RecaptchaV3 is enterprise.</summary>
+        public bool IsEnterprise { get; set; } = false;
 
         /// <summary>The ReCaptchaV3 action.</summary>
         public string Action { get; set; } = "";
@@ -174,6 +178,8 @@ namespace RuriLib.Legacy.Blocks
                     SiteUrl = LineParser.ParseLiteral(ref input, "SITE URL");
                     Action = LineParser.ParseLiteral(ref input, "ACTION");
                     MinScore = LineParser.ParseLiteral(ref input, "MIN SCORE");
+                    while (LineParser.Lookahead(ref input) == TokenType.Boolean)
+                        LineParser.SetBool(ref input, this);
                     break;
 
                 case CaptchaType.FunCaptcha:
@@ -260,7 +266,8 @@ namespace RuriLib.Legacy.Blocks
                     writer
                         .Literal(SiteKey)
                         .Literal(SiteUrl)
-                        .Boolean(IsInvisible, nameof(IsInvisible));
+                        .Boolean(IsInvisible, nameof(IsInvisible))
+                        .Boolean(IsEnterprise, nameof(IsEnterprise));
                     break;
 
                 case CaptchaType.ReCaptchaV3:
@@ -268,7 +275,9 @@ namespace RuriLib.Legacy.Blocks
                         .Literal(SiteKey)
                         .Literal(SiteUrl)
                         .Literal(Action)
-                        .Literal(MinScore);
+                        .Literal(MinScore)
+                        .Boolean(IsInvisible, nameof(IsInvisible))
+                        .Boolean(IsEnterprise, nameof(IsEnterprise));
                     break;
 
                 case CaptchaType.FunCaptcha:
@@ -327,8 +336,6 @@ namespace RuriLib.Legacy.Blocks
                     Type = (ProxyType)Enum.Parse(typeof(ProxyType), data.Proxy.Type.ToString()),
                     Username = data.Proxy.Username,
                     Password = data.Proxy.Password,
-                    UserAgent = UserAgent,
-                    Cookies = data.COOKIES.ToList().Concat(ls.GlobalCookies.ToList()).Select(p => (p.Key, p.Value)).ToArray()
                 }
                 : null;
 
@@ -457,10 +464,10 @@ namespace RuriLib.Legacy.Blocks
                 }),
 
                 CaptchaType.ReCaptchaV2 => await provider.SolveRecaptchaV2Async(ReplaceValues(SiteKey, ls), ReplaceValues(SiteUrl, ls),
-                    "", false, IsInvisible, proxy),
+                    "", IsEnterprise, IsInvisible, proxy),
 
                 CaptchaType.ReCaptchaV3 => await provider.SolveRecaptchaV3Async(ReplaceValues(SiteKey, ls), ReplaceValues(SiteUrl, ls),
-                    ReplaceValues(Action, ls), float.Parse(ReplaceValues(MinScore, ls)), false, proxy),
+                    ReplaceValues(Action, ls), float.Parse(ReplaceValues(MinScore, ls)), IsEnterprise, proxy),
 
                 CaptchaType.FunCaptcha => await provider.SolveFuncaptchaAsync(ReplaceValues(PublicKey, ls), ReplaceValues(ServiceUrl, ls),
                     ReplaceValues(SiteUrl, ls), NoJS, proxy),
