@@ -168,6 +168,7 @@ namespace RuriLib.Legacy.Blocks
                     // SOLVECAPTCHA ReCaptchaV2 "sitekey" "siteurl" [IsInvisible?]
                     SiteKey = LineParser.ParseLiteral(ref input, "SITE KEY");
                     SiteUrl = LineParser.ParseLiteral(ref input, "SITE URL");
+                    Action = LineParser.ParseLiteral(ref input, "ACTION");
                     while (LineParser.Lookahead(ref input) == TokenType.Boolean)
                         LineParser.SetBool(ref input, this);
                     break;
@@ -266,6 +267,7 @@ namespace RuriLib.Legacy.Blocks
                     writer
                         .Literal(SiteKey)
                         .Literal(SiteUrl)
+                        .Literal(Action)
                         .Boolean(IsInvisible, nameof(IsInvisible))
                         .Boolean(IsEnterprise, nameof(IsEnterprise));
                     break;
@@ -464,7 +466,7 @@ namespace RuriLib.Legacy.Blocks
                 }),
 
                 CaptchaType.ReCaptchaV2 => await provider.SolveRecaptchaV2Async(ReplaceValues(SiteKey, ls), ReplaceValues(SiteUrl, ls),
-                    "", IsEnterprise, IsInvisible, proxy),
+                    Action, "", IsEnterprise, IsInvisible, proxy),
 
                 CaptchaType.ReCaptchaV3 => await provider.SolveRecaptchaV3Async(ReplaceValues(SiteKey, ls), ReplaceValues(SiteUrl, ls),
                     ReplaceValues(Action, ls), float.Parse(ReplaceValues(MinScore, ls)), IsEnterprise, proxy),

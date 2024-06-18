@@ -65,14 +65,17 @@ namespace RuriLib.Blocks.Captchas
         }
 
         [Block("Solves a ReCaptcha V2")]
-        public static async Task<string> SolveRecaptchaV2(BotData data, string siteKey, string siteUrl,
+        public static async Task<string> SolveRecaptchaV2(BotData data, string siteKey, string siteUrl, string action = "",
             string sData = "", bool enterprise = false, bool isInvisible = false, bool useProxy = false, bool useCookies = false,
             string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
         {
             data.Logger.LogHeader();
             await CheckBalance(data).ConfigureAwait(false);
 
-            var response = await data.Providers.Captcha.SolveRecaptchaV2Async(siteKey, siteUrl, sData, enterprise, isInvisible,
+            // set action to null/default if it is an empty string
+            if (action == "") action = default;
+
+            var response = await data.Providers.Captcha.SolveRecaptchaV2Async(siteKey, siteUrl, action, sData, enterprise, isInvisible,
                 SetupProxy(data, useProxy, userAgent), 
                 useCookies ? data.COOKIES.Select(c => (c.Key, c.Value)).ToArray() : default,
                 userAgent, data.CancellationToken).ConfigureAwait(false);
@@ -83,9 +86,9 @@ namespace RuriLib.Blocks.Captchas
         }
 
         // For backwards compatibility
-        public static Task<string> SolveRecaptchaV2(BotData data, string siteKey, string siteUrl, bool isInvisible = false, bool useProxy = false, bool useCookies = false,
+        public static Task<string> SolveRecaptchaV2(BotData data, string siteKey, string siteUrl, string action = "", bool isInvisible = false, bool useProxy = false, bool useCookies = false,
             string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
-            => SolveRecaptchaV2(data, siteKey, siteUrl, "", false, isInvisible, useProxy, useCookies, userAgent);
+            => SolveRecaptchaV2(data, siteKey, siteUrl, action, "", false, isInvisible, useProxy, useCookies, userAgent);
 
         [Block("Solves a ReCaptcha V3")]
         public static async Task<string> SolveRecaptchaV3(BotData data, string siteKey, string siteUrl, string action,

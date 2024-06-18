@@ -21,7 +21,7 @@ namespace RuriLib.Providers.Captchas
         Task<decimal> GetBalanceAsync(CancellationToken cancellationToken = default);
         Task<StringResponse> SolveTextCaptchaAsync(string text, TextCaptchaOptions options = null, CancellationToken cancellationToken = default);
         Task<StringResponse> SolveImageCaptchaAsync(string base64, ImageCaptchaOptions options = null, CancellationToken cancellationToken = default);
-        Task<StringResponse> SolveRecaptchaV2Async(string siteKey, string siteUrl, string sData = "", bool enterprise = false, bool invisible = false, Proxy proxy = null, IEnumerable<(string, string)> cookies = default, string userAgent = default, CancellationToken cancellationToken = default);
+        Task<StringResponse> SolveRecaptchaV2Async(string siteKey, string siteUrl, string action = default, string sData = "", bool enterprise = false, bool invisible = false, Proxy proxy = null, IEnumerable<(string, string)> cookies = default, string userAgent = default, CancellationToken cancellationToken = default);
         Task<StringResponse> SolveRecaptchaV3Async(string siteKey, string siteUrl, string action, float minScore, bool enterprise = false, Proxy proxy = null, IEnumerable<(string, string)> cookies = default, string userAgent = default, CancellationToken cancellationToken = default);
         Task<StringResponse> SolveFuncaptchaAsync(string publicKey, string serviceUrl, string siteUrl, bool noJS = false, Proxy proxy = null, CancellationToken cancellationToken = default);
         Task<StringResponse> SolveHCaptchaAsync(string siteKey, string siteUrl, Proxy proxy = null, CancellationToken cancellationToken = default);
