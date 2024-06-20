@@ -337,11 +337,7 @@ namespace RuriLib.Blocks.Puppeteer.Elements
             var elements = new IElementHandle[] { };
             if (findBy == FindElementBy.XPath)
             {
-                var r = await frame.QuerySelectorAsync(identifier);
-                if (r != null)
-                {
-                    elements = new[] { r };
-                }
+                elements = await frame.XPathAsync(identifier);
             }
             else
             {
