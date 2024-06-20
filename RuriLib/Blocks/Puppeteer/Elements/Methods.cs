@@ -68,7 +68,7 @@ namespace RuriLib.Blocks.Puppeteer.Elements
 
             var frame = GetFrame(data);
             var elem = await GetElement(frame, findBy, identifier, index);
-            await elem.ClickAsync(new PuppeteerSharp.Input.ClickOptions { Button = mouseButton, ClickCount = clickCount, Delay = timeBetweenClicks });
+            await elem.ClickAsync(new PuppeteerSharp.Input.ClickOptions { Button = mouseButton, Count = clickCount, Delay = timeBetweenClicks });
 
             data.Logger.Log($"Clicked {clickCount} time(s) with {mouseButton} button", LogColors.DarkSalmon);
         }
@@ -268,7 +268,7 @@ namespace RuriLib.Blocks.Puppeteer.Elements
 
             var frame = GetFrame(data);
             var elem = await GetElement(frame, findBy, identifier, index);
-            await elem.ScreenshotAsync(fileName, new ScreenshotOptions 
+            await elem.ScreenshotAsync(fileName, new ElementScreenshotOptions 
             {
                 FullPage = fullPage,
                 OmitBackground = omitBackground,
@@ -287,7 +287,7 @@ namespace RuriLib.Blocks.Puppeteer.Elements
 
             var frame = GetFrame(data);
             var elem = await GetElement(frame, findBy, identifier, index);
-            var base64 = await elem.ScreenshotBase64Async(new ScreenshotOptions 
+            var base64 = await elem.ScreenshotBase64Async(new ElementScreenshotOptions 
             { 
                 FullPage = fullPage,
                 OmitBackground = omitBackground,
@@ -332,11 +332,22 @@ namespace RuriLib.Blocks.Puppeteer.Elements
             data.Logger.Log($"Waited for element with {findBy} {identifier}", LogColors.DarkSalmon);
         }
 
-        private static async Task<ElementHandle> GetElement(Frame frame, FindElementBy findBy, string identifier, int index)
+        private static async Task<IElementHandle> GetElement(IFrame frame, FindElementBy findBy, string identifier, int index)
         {
-            var elements = findBy == FindElementBy.XPath
-                ? await frame.XPathAsync(identifier)
-                : await frame.QuerySelectorAllAsync(BuildSelector(findBy, identifier));
+            var elements = new IElementHandle[] { };
+            if (findBy == FindElementBy.XPath)
+            {
+                var r = await frame.QuerySelectorAsync(identifier);
+                if (r != null)
+                {
+                    elements = new[] { r };
+                }
+            }
+            else
+            {
+                elements = await frame.QuerySelectorAllAsync(BuildSelector(findBy, identifier));
+            }
+            
 
             if (elements.Length < index + 1)
             {
@@ -379,7 +390,7 @@ namespace RuriLib.Blocks.Puppeteer.Elements
         private static PuppeteerSharp.Page GetPage(BotData data)
             => data.TryGetObject<PuppeteerSharp.Page>("puppeteerPage") ?? throw new Exception("No pages open!");
 
-        private static Frame GetFrame(BotData data)
+        private static IFrame GetFrame(BotData data)
             => data.TryGetObject<Frame>("puppeteerFrame") ?? GetPage(data).MainFrame;
     }
 }

@@ -286,7 +286,7 @@ namespace RuriLib.Blocks.Puppeteer.Page
             var page = GetPage(data);
             var options = new WaitForOptions
             {
-                Timeout = timeoutMilliseconds
+                Timeout = timeoutMilliseconds,
             };
 
             var response = await page.WaitForResponseAsync(url, options);
@@ -312,7 +312,7 @@ namespace RuriLib.Blocks.Puppeteer.Page
             data.Logger.Log(data.SOURCE, LogColors.GreenYellow, true);
         }
 
-        private static PuppeteerSharp.Page GetPage(BotData data)
+        private static PuppeteerSharp.IPage GetPage(BotData data)
             => data.TryGetObject<PuppeteerSharp.Page>("puppeteerPage") ?? throw new Exception("No pages open!");
 
         private static void SwitchToMainFramePrivate(BotData data)
